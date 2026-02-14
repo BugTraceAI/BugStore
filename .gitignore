@@ -52,3 +52,4 @@ seed_db.py
 completion_summary.txt
 progress.txt
 openapi.json
+fly.toml
