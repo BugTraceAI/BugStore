@@ -52,7 +52,7 @@ const BlogList = () => {
                                 <img
                                     src={`https://picsum.photos/seed/${blog.id * 7}/600/400`}
                                     alt={blog.title}
-                                    className="w-full h-full object-cover grayscale transition-all group-hover:grayscale-0 group-hover:scale-110 duration-700"
+                                    className="w-full h-full object-cover transition-all group-hover:scale-110 duration-700"
                                 />
                             </div>
 

@@ -109,7 +109,7 @@ const Catalog = () => {
                             <img
                                 src={product.images?.[0]?.url || `/api/products/${product.id}/image?file=placeholder.jpg`}
                                 alt={product.name}
-                                className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110"
+                                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                             />
 
                             {/* Overlay Badges */}
