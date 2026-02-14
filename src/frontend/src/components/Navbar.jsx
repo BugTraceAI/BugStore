@@ -12,10 +12,11 @@ const Navbar = () => {
 
     const fetchCartCount = async () => {
         try {
-            const res = await fetch('/api/cart');
+            const res = await fetch('/api/cart/');
             if (res.ok) {
                 const data = await res.json();
-                setCartCount(data.items.reduce((acc, item) => acc + item.quantity, 0));
+                const items = data.items || [];
+                setCartCount(items.reduce((acc, item) => acc + item.quantity, 0));
             }
         } catch (err) {
             console.error("Cart count error:", err);
