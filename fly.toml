@@ -9,7 +9,7 @@ primary_region = "ams"
   DATABASE_URL = "sqlite:////data/bugstore.db"
   BUGSTORE_WAF_ENABLED = "false"
   BUGSTORE_SCORING_ENABLED = "false"
-  BUGSTORE_DIFFICULTY = "2"
+  BUGSTORE_DIFFICULTY = "0"
   BUGSTORE_AUTO_SEED = "true"
 
 [http_service]
