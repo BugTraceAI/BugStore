@@ -149,6 +149,13 @@ BugStore/
   fly.toml               # Fly.io deployment config
 ```
 
+## Walkthrough Guide
+
+New to BugStore? Follow our hint-based walkthrough to find all 24 active vulnerabilities. No full solutions — just progressive hints to help you learn by doing.
+
+- **[English Walkthrough](WALKTHROUGH_EN.md)**
+- **[Guia en Espanol](WALKTHROUGH_ES.md)**
+
 ## Security Notice
 
 This app is **intentionally vulnerable**. It contains:

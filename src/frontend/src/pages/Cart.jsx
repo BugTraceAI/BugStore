@@ -106,7 +106,7 @@ const Cart = () => {
                         {cart.items.map(item => (
                             <div key={item.id} className="glass-card glass-card-hover p-6 rounded-3xl flex items-center gap-6 group transition-shadow">
                                 <div className="w-24 h-24 bg-hive-deep rounded-2xl overflow-hidden shrink-0">
-                                    <img src={item.product_image || 'https://via.placeholder.com/100?text=Bug'} alt={item.product_name} className="w-full h-full object-cover" />
+                                    <img src={item.product_image || `/api/products/${item.product_id}/image?file=placeholder.jpg`} alt={item.product_name} className="w-full h-full object-cover" />
                                 </div>
 
                                 <div className="grow">

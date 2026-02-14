@@ -37,6 +37,7 @@ def get_cart(db: Session = Depends(get_db), session_id: str = Depends(get_sessio
                 "product_id": item.product_id,
                 "product_name": item.product.name if item.product else "Unknown Bug",
                 "product_price": item.product.price if item.product else 0,
+                "product_image": item.product.images[0].url if item.product and item.product.images else None,
                 "quantity": item.quantity,
                 "subtotal": (item.product.price * item.quantity) if item.product else 0
             } for item in items

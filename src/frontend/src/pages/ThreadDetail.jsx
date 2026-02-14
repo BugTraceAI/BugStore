@@ -143,7 +143,7 @@ const ThreadDetail = () => {
                 ) : (
                     <div className="bg-coral p-10 rounded-3xl text-center text-white shadow-card">
                         <p className="font-black uppercase tracking-widest mb-4">Authentication Required</p>
-                        <Link to="/login" className="bg-white text-hive-text px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-hive-light/40 transition-colors">Join the Discussion</Link>
+                        <Link to="/login" className="bg-white/90 text-hive-dark px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-white transition-colors">Join the Discussion</Link>
                     </div>
                 )}
             </div>
