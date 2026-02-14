@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Build artifacts
+src/frontend/dist/
+*.egg-info/
+
+# Database
+*.db
+
+# IDE
+.vscode/
+.idea/
+
+# Agent/automation artifacts
+.p0g/
+.agent/
+tasks/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local

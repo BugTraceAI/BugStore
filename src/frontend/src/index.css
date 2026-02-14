@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-sans bg-hive-dark text-hive-text;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-sans text-hive-text;
+    }
+}
+
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: dark;
+    color: #F8F9FA;
+    background-color: #0D0A1A;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1A0F2E;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3D2B5F;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4D3B6F;
+}
+
+/* Glass card utility */
+@layer components {
+    .glass-card {
+        @apply bg-hive-medium/60 backdrop-blur-xl border border-hive-border/40 shadow-card;
+    }
+
+    .glass-card-hover {
+        @apply hover:bg-hive-light/60 hover:border-hive-border/60 hover:shadow-card-hover transition-all duration-300;
+    }
+
+    .glow-border {
+        @apply border border-coral/30 shadow-glow;
+    }
+
+    .btn-coral {
+        @apply bg-coral text-white font-bold rounded-2xl hover:bg-coral-hover active:bg-coral-active shadow-glow transition-all duration-200 active:scale-[0.98];
+    }
+
+    .btn-ghost {
+        @apply bg-hive-light/40 text-hive-text border border-hive-border/40 font-bold rounded-2xl hover:bg-hive-light/60 hover:border-hive-border/60 transition-all duration-200;
+    }
+
+    .input-dark {
+        @apply bg-hive-deep/80 border border-hive-border/40 text-hive-text rounded-2xl focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-coral/50 transition-all placeholder:text-hive-subtle;
+    }
+}
+
+/* Blog content prose override for dark theme */
+.blog-content {
+    color: #B0A8C0;
+}
+
+.blog-content h1, .blog-content h2, .blog-content h3 {
+    color: #F8F9FA;
+}
+
+.blog-content a {
+    color: #FF7F50;
+}
+
+.blog-content strong {
+    color: #F8F9FA;
+}
+
+.blog-content code {
+    background: #2D1B4D;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+}

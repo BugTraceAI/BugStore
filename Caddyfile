@@ -1,0 +1,24 @@
+{
+    order coraza_waf first
+}
+
+:8080 {
+    log {
+        output stdout
+        format json
+    }
+
+    coraza_waf {
+        # F-021: OWASP CRS v4
+        load_owasp_crs
+        directives `
+            Include @crs-setup-conf
+            Include @owasp_crs/*.conf
+            SecRuleEngine On
+            SecRequestBodyAccess On
+        `
+    }
+
+    # Proxy to FastAPI backend (running on 8000 internally when WAF is active)
+    reverse_proxy localhost:8000
+}

@@ -1,0 +1,14 @@
+fastapi==0.104.1
+uvicorn==0.24.0
+sqlalchemy==2.0.23
+jinja2==3.1.2
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+requests==2.31.0
+strawberry-graphql==0.211.0
+lxml==4.9.3
+cffi==1.16.0
+pydantic==2.5.2
+pydantic-settings==2.1.0
+email-validator>=2.0.0
