@@ -22,6 +22,14 @@ tasks/
 AGENTS.md
 BENCHMARK-GUIDE.md
 VULNS.md
+PRD.md
+FEATURES.md
+FEATURES_EN.md
+TASKS.md
+SETUP.md
+DOCKER-QUICKSTART.md
+prd.json
+schema.sql
 
 # OS
 .DS_Store
