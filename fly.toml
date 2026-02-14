@@ -1,5 +1,5 @@
-app = "bugstore"
-primary_region = "iad"
+app = "bugstore-dev"
+primary_region = "ams"
 
 [build]
   dockerfile = "Dockerfile"
@@ -7,7 +7,7 @@ primary_region = "iad"
 [env]
   PORT = "8080"
   DATABASE_URL = "sqlite:////data/bugstore.db"
-  BUGSTORE_WAF_ENABLED = "true"
+  BUGSTORE_WAF_ENABLED = "false"
   BUGSTORE_SCORING_ENABLED = "false"
   BUGSTORE_DIFFICULTY = "2"
   BUGSTORE_AUTO_SEED = "true"
@@ -26,6 +26,7 @@ primary_region = "iad"
 
 [checks]
   [checks.health]
+    type = "http"
     port = 8080
     path = "/api/health"
     interval = "30s"
