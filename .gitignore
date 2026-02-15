@@ -14,41 +14,17 @@ src/frontend/dist/
 .vscode/
 .idea/
 
-# Agent/automation artifacts
-.p0g/
-.agent/
-agents/
-tasks/
-AGENTS.md
-BENCHMARK-GUIDE.md
-VULNS.md
-PRD.md
-FEATURES.md
-FEATURES_EN.md
-TASKS.md
-SETUP.md
-DOCKER-QUICKSTART.md
-prd.json
-schema.sql
-
 # OS
 .DS_Store
 Thumbs.db
 
 # Environment
 .env
-.env.local
+.env.*
 
 # Virtual environments
 venv/
 .venv/
 
-# Auxiliary scripts (not part of core app)
-generate_*.py
-create_prd_json.py
-verify_tasks.py
-start_server.py
-seed_db.py
-completion_summary.txt
-progress.txt
-openapi.json
+# Standard logs
+*.log
