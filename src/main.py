@@ -74,11 +74,11 @@ async def read_root(request: Request, response: Response, db: Session = Depends(
         tracking_id = base64.b64encode(raw_id.encode()).decode()
         response.set_cookie(key="TrackingId", value=tracking_id)
     
-    # V-013: Vulnerable SQL injection
+    # V-013: Vulnerable SQL injection (blind — result not shown to user)
     try:
         decoded_id = base64.b64decode(tracking_id).decode()
-        query = f"SELECT * FROM products WHERE description = '{decoded_id}'" 
-        db.execute(text(query))
+        query = f"SELECT 1 FROM products WHERE description = '{decoded_id}' LIMIT 1"
+        db.execute(text(query)).close()
     except Exception:
         pass
     

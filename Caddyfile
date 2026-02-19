@@ -1,24 +1,24 @@
 {
-    order coraza_waf first
+	order coraza_waf first
 }
 
-:8080 {
-    log {
-        output stdout
-        format json
-    }
+bugstore.bugtraceai.com {
+	log {
+		output stdout
+		format json
+	}
 
-    coraza_waf {
-        # F-021: OWASP CRS v4
-        load_owasp_crs
-        directives `
-            Include @crs-setup-conf
-            Include @owasp_crs/*.conf
-            SecRuleEngine On
-            SecRequestBodyAccess On
-        `
-    }
+	coraza_waf {
+		load_owasp_crs
+		directives `
+			SecRuleEngine On
+			SecRequestBodyAccess On
+			SecRequestBodyLimit 1048576
+			SecRequestBodyNoFilesLimit 131072
+			SecRequestBodyInMemoryLimit 131072
+			SecResponseBodyAccess Off
+		`
+	}
 
-    # Proxy to FastAPI backend (running on 8000 internally when WAF is active)
-    reverse_proxy localhost:8000
+	reverse_proxy localhost:8000
 }

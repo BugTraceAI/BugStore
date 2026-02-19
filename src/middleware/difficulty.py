@@ -9,15 +9,27 @@ def get_difficulty_level():
 
 # Basic rate limiting store: {ip: [timestamps]}
 rate_limit_store = {}
+_last_cleanup = time.time()
+_CLEANUP_INTERVAL = 300  # Purge stale IPs every 5 minutes
+_MAX_STORE_SIZE = 10000  # Hard cap on tracked IPs
 
 def check_rate_limit(ip: str, limit: int, window: int = 60) -> bool:
+    global _last_cleanup
     now = time.time()
+
+    # Periodic cleanup: remove IPs with no recent activity
+    if now - _last_cleanup > _CLEANUP_INTERVAL or len(rate_limit_store) > _MAX_STORE_SIZE:
+        stale_ips = [k for k, v in rate_limit_store.items() if not v or now - v[-1] > window]
+        for k in stale_ips:
+            del rate_limit_store[k]
+        _last_cleanup = now
+
     timestamps = rate_limit_store.get(ip, [])
     # Filter old timestamps
     timestamps = [t for t in timestamps if now - t < window]
     timestamps.append(now)
     rate_limit_store[ip] = timestamps
-    
+
     if len(timestamps) > limit:
         return False
     return True
