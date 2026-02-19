@@ -1,0 +1,43 @@
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: bugstore_root
+      MARIADB_DATABASE: bugstore
+      MARIADB_USER: bugstore
+      MARIADB_PASSWORD: bugstore
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  app:
+    image: yz9yt/bugstore:latest
+    restart: unless-stopped
+    mem_limit: 4g
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql+pymysql://bugstore:bugstore@db:3306/bugstore"
+      BUGSTORE_WAF_ENABLED: "true"
+      BUGSTORE_SCORING_ENABLED: "true"
+      BUGSTORE_AUTO_SEED: "true"
+      BUGSTORE_WORKERS: "4"
+      BUGSTORE_TIMEOUT: "30"
+      BUGSTORE_REQUEST_TIMEOUT: "10"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data/caddy
+
+volumes:
+  mariadb_data:
+  caddy_data:
+    external: true

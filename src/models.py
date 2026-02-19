@@ -13,13 +13,13 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
-    password_hash = Column(String, nullable=False) # MD5
-    name = Column(String)
+    username = Column(String(100), unique=True, index=True, nullable=False)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=False) # MD5
+    name = Column(String(255))
     bio = Column(Text)
-    avatar_url = Column(String)
-    role = Column(String, default="user") # user, staff, admin
+    avatar_url = Column(String(500))
+    role = Column(String(50), default="user") # user, staff, admin
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -33,17 +33,17 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    species = Column(String)
-    latin_name = Column(String)
+    name = Column(String(255), nullable=False)
+    species = Column(String(255))
+    latin_name = Column(String(255))
     description = Column(Text)
-    personality = Column(String)
-    care_level = Column(String) # Beginner, Intermediate, Expert
+    personality = Column(String(100))
+    care_level = Column(String(50)) # Beginner, Intermediate, Expert
     price = Column(Float, nullable=False)
-    diet = Column(String)
-    habitat = Column(String)
-    lifespan = Column(String)
-    category = Column(String) # Beetles, Butterflies, Arachnids, Flying, Crawling, Exotic
+    diet = Column(String(255))
+    habitat = Column(String(255))
+    lifespan = Column(String(100))
+    category = Column(String(100)) # Beetles, Butterflies, Arachnids, Flying, Crawling, Exotic
     stock = Column(Integer, default=0)
     rating_avg = Column(Float, default=0)
     reviews_count = Column(Integer, default=0)
@@ -59,8 +59,8 @@ class ProductImage(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer, ForeignKey("products.id"))
-    url = Column(String, nullable=False)
-    alt_text = Column(String)
+    url = Column(String(500), nullable=False)
+    alt_text = Column(String(255))
     sort_order = Column(Integer, default=0)
 
     product = relationship("Product", back_populates="images")
@@ -72,7 +72,7 @@ class CartItem(Base):
     __tablename__ = "cart_items"
 
     id = Column(Integer, primary_key=True, index=True)
-    session_id = Column(String, index=True, nullable=False)
+    session_id = Column(String(255), index=True, nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"))
     quantity = Column(Integer, default=1)
 
@@ -85,7 +85,7 @@ class Coupon(Base):
     __tablename__ = "coupons"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String, unique=True, index=True, nullable=False)
+    code = Column(String(100), unique=True, index=True, nullable=False)
     discount_percent = Column(Integer, nullable=False)
     max_uses = Column(Integer, default=-1) # -1 for unlimited
     current_uses = Column(Integer, default=0)
@@ -101,13 +101,13 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Allow guest orders
-    status = Column(String, default="Pending") # Pending, Processing, Shipped, Delivered
+    status = Column(String(50), default="Pending") # Pending, Processing, Shipped, Delivered
     total = Column(Float, nullable=False)
     shipping_cost = Column(Float, default=0)
     tax = Column(Float, default=0)
     discount = Column(Float, default=0)
     shipping_address = Column(Text) # JSON string
-    tracking_number = Column(String)
+    tracking_number = Column(String(255))
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -137,7 +137,7 @@ class Blog(Base):
     __tablename__ = "blogs"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False)
+    title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False) # Stored XSS (V-016)
     author_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -172,7 +172,7 @@ class Thread(Base):
     __tablename__ = "threads"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False)
+    title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
     author_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -203,7 +203,7 @@ class EmailTemplate(Base):
     __tablename__ = "email_templates"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True, nullable=False)
-    subject = Column(String, nullable=False)
+    name = Column(String(100), unique=True, index=True, nullable=False)
+    subject = Column(String(255), nullable=False)
     body = Column(Text, nullable=False) # SSTI payload here
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

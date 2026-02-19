@@ -34,9 +34,10 @@ COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 ENV PYTHONDONTWRITEBYTECODE=1 \
   PYTHONUNBUFFERED=1 \
   PORT=8080 \
-  DATABASE_URL="sqlite:////data/bugstore.db" \
+  DATABASE_URL="mysql+pymysql://bugstore:bugstore@db:3306/bugstore" \
   BUGSTORE_WAF_ENABLED="true" \
-  BUGSTORE_SCORING_ENABLED="true"
+  BUGSTORE_SCORING_ENABLED="true" \
+  XDG_DATA_HOME="/data"
 
 # Install Python dependencies
 COPY requirements.txt .

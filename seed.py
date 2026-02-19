@@ -4,9 +4,8 @@ from src.models import Base, User, Product, Order, OrderItem, Review, Blog, Thre
 from datetime import datetime, timedelta
 import random
 
-# Recreate tables
-print("Dropping and recreating all tables...")
-Base.metadata.drop_all(bind=engine)
+# Ensure tables exist (idempotent)
+print("Ensuring all tables exist...")
 Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
