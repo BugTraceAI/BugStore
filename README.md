@@ -34,20 +34,20 @@ It's the official playground of [**BugTraceAI**](https://bugtraceai.com) — bui
 ```bash
 git clone https://github.com/BugTraceAI/BugStore.git
 cd BugStore
-docker build -t bugstore .
-docker run -p 8080:8080 -e BUGSTORE_AUTO_SEED=true bugstore
+docker compose up -d
 ```
 
-Open `http://localhost:8080` and start hunting.
+Open `http://localhost:80` and start hunting. MariaDB + FastAPI + Caddy WAF all start automatically.
 
 ## What's Inside
 
 ```
 Frontend:  React + Vite + Tailwind (dark "hive" theme)
-Backend:   FastAPI + SQLAlchemy + SQLite
+Backend:   FastAPI + SQLAlchemy + MariaDB
 API:       REST + GraphQL
 Auth:      JWT tokens
-Docker:    Multi-stage build, single container
+WAF:       Caddy + Coraza (OWASP CRS)
+Docker:    Multi-stage build + docker-compose
 ```
 
 **The Store:**
@@ -83,10 +83,12 @@ The full list with PoCs is at `/api/debug/vulns` (Level 0 only) or on the Scoreb
 | Variable | Default | What it does |
 |----------|---------|-------------|
 | `BUGSTORE_DIFFICULTY` | `0` | `0` = easy mode, `1` = filtered, `2` = WAF active |
-| `BUGSTORE_AUTO_SEED` | `false` | Seed DB with test data on first run |
+| `BUGSTORE_AUTO_SEED` | `true` | Seed DB with test data on first run |
 | `BUGSTORE_SCORING_ENABLED` | `true` | Show/hide the scoring dashboard |
-| `BUGSTORE_WAF_ENABLED` | `false` | Enable Caddy reverse proxy with WAF |
-| `PORT` | `8080` | Server port |
+| `BUGSTORE_WAF_ENABLED` | `true` | Enable Caddy reverse proxy with Coraza WAF |
+| `BUGSTORE_WORKERS` | `4` | Number of uvicorn workers |
+| `BUGSTORE_REQUEST_TIMEOUT` | `10` | Max request duration in seconds |
+| `DATABASE_URL` | `mysql+pymysql://...` | MariaDB connection string |
 
 ### Difficulty Levels
 
@@ -97,6 +99,9 @@ The full list with PoCs is at `/api/debug/vulns` (Level 0 only) or on the Scoreb
 ## Local Development (without Docker)
 
 ```bash
+# Start MariaDB (or use SQLite for quick local dev)
+export DATABASE_URL="sqlite:///./bugstore.db"
+
 # Backend
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
@@ -111,6 +116,7 @@ npm run dev
 ```
 
 Backend at `:8080`, frontend at `:5173` (proxies API calls to backend).
+For local dev, SQLite still works. Production uses MariaDB via docker-compose.
 
 ## Use It With BugTraceAI
 
@@ -118,10 +124,10 @@ BugStore was built as a target for [**BugTraceAI**](https://bugtraceai.com). Poi
 
 ```bash
 # Start BugStore
-docker run -p 8080:8080 -e BUGSTORE_AUTO_SEED=true bugstore
+docker compose up -d
 
 # Scan with BugTraceAI
-bugtrace scan http://localhost:8080
+bugtrace scan http://localhost:80
 ```
 
 Compare the automated results against the Scoreboard to see what was found and what was missed.

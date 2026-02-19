@@ -31,7 +31,7 @@ async def list_vulnerabilities(user: User = Depends(get_current_user_optional)):
             "location": "/api/products?search=...",
             "status": "planted",
             "poc": "/api/products?search=test' OR '1'='1",
-            "impact": "Database enumeration, data exfiltration"
+            "impact": "Database enumeration via information_schema, data exfiltration"
         },
         {
             "id": "V-002",
@@ -129,8 +129,8 @@ async def list_vulnerabilities(user: User = Depends(get_current_user_optional)):
             "tier": 2,
             "location": "/api/products?min_price=...",
             "status": "planted",
-            "poc": "?min_price=1 AND SLEEP(5)",
-            "impact": "Time-based data extraction"
+            "poc": "?min_price=1 AND SLEEP(5)-- (MySQL native)",
+            "impact": "Time-based data extraction via MySQL SLEEP()"
         },
         {
             "id": "V-013",
@@ -138,8 +138,8 @@ async def list_vulnerabilities(user: User = Depends(get_current_user_optional)):
             "tier": 2,
             "location": "Root endpoint cookie processing",
             "status": "planted",
-            "poc": "Set TrackingId cookie to base64 of SQL payload",
-            "impact": "Database compromise"
+            "poc": "Set TrackingId cookie to base64(' AND SLEEP(5)--)",
+            "impact": "Database compromise via MySQL blind SQLi"
         },
         {
             "id": "V-014",
