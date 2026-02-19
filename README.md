@@ -87,8 +87,8 @@ The full list with PoCs is at `/api/debug/vulns` (Level 0 only) or on the Scoreb
 | `BUGSTORE_DIFFICULTY` | `0` | `0` = easy mode, `1` = filtered, `2` = WAF active |
 | `BUGSTORE_AUTO_SEED` | `true` | Seed DB with test data on first run |
 | `BUGSTORE_SCORING_ENABLED` | `true` | Show/hide the scoring dashboard |
-| `BUGSTORE_WAF_ENABLED` | `true` | Enable Caddy reverse proxy with Coraza WAF |
-| `BUGSTORE_WORKERS` | `4` | Number of uvicorn workers |
+| `BUGSTORE_WAF_ENABLED` | `false` | Enable Coraza WAF + rate limiting (for difficulty 2) |
+| `BUGSTORE_WORKERS` | `2` | Number of uvicorn workers |
 | `BUGSTORE_REQUEST_TIMEOUT` | `10` | Max request duration in seconds |
 | `DATABASE_URL` | `mysql+pymysql://...` | MariaDB connection string |
 
