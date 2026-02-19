@@ -17,6 +17,9 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminProducts from './pages/AdminProducts';
 import ScoringDashboard from './pages/ScoringDashboard';
+import SecurePortalLogin from './pages/SecurePortalLogin';
+import SecurePortalSetup from './pages/SecurePortalSetup';
+import SecurePortalDashboard from './pages/SecurePortalDashboard';
 import { useConfig } from './ConfigContext';
 
 const NotFound = () => (
@@ -54,6 +57,10 @@ function App() {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/admin/users" element={<AdminUsers />} />
                     <Route path="/admin/products" element={<AdminProducts />} />
+                    {/* Secure Portal Routes (with 2FA) */}
+                    <Route path="/secure-portal/login" element={<SecurePortalLogin />} />
+                    <Route path="/secure-portal/setup" element={<SecurePortalSetup />} />
+                    <Route path="/secure-portal" element={<SecurePortalDashboard />} />
                     {config.scoring_enabled && (
                         <Route path="/scoring" element={<ScoringDashboard />} />
                     )}

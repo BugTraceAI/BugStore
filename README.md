@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://bugtraceai.com"><img src="https://img.shields.io/badge/by-BugTraceAI-FF6B47?style=for-the-badge" alt="BugTraceAI" /></a>
-  <img src="https://img.shields.io/badge/vulns-30-red?style=for-the-badge" alt="30 Vulnerabilities" />
+  <img src="https://img.shields.io/badge/vulns-32-red?style=for-the-badge" alt="32 Vulnerabilities" />
   <img src="https://img.shields.io/badge/docker-ready-blue?style=for-the-badge&logo=docker" alt="Docker Ready" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License" />
 </p>
@@ -21,7 +21,7 @@
 
 ## What is this?
 
-BugStore is a full-featured online shop where you can "adopt" exotic bugs — beetles, mantises, spiders, and ants. It looks real. It works like a real store. But under the hood, it's riddled with **30 deliberately planted security vulnerabilities** spanning the OWASP Top 10 and beyond.
+BugStore is a full-featured online shop where you can "adopt" exotic bugs — beetles, mantises, spiders, and ants. It looks real. It works like a real store. But under the hood, it's riddled with **32 deliberately planted security vulnerabilities** spanning the OWASP Top 10 and beyond.
 
 It's the official playground of [**BugTraceAI**](https://bugtraceai.com) — built so you can point your scanners, tools, or bare hands at a real-looking target and practice finding bugs in bugs.
 
@@ -58,8 +58,69 @@ Docker:    Multi-stage build, single container
 - Product reviews
 - Admin dashboard with user/product management
 - Scoring dashboard to track your progress
+- **Secure Portal** with TOTP/2FA authentication
 
-**The Vulns (30 total):**
+## Secure Portal (2FA)
+
+BugStore includes a secondary admin portal at `/secure-portal` that requires TOTP-based two-factor authentication. This coexists with the standard `/admin` (no 2FA) for testing both authentication flows.
+
+### Setting Up 2FA
+
+1. Login normally at `/login` with admin credentials
+2. Navigate to `/secure-portal/setup`
+3. Scan the QR code with Google Authenticator, Authy, or similar
+4. Enter the 6-digit code to enable 2FA
+
+### Using the Secure Portal
+
+```bash
+# 1. Login normally to get a basic token
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+
+# 2. Setup TOTP (requires basic token)
+curl -X POST http://localhost:8080/api/secure-portal/setup-totp \
+  -H "Authorization: Bearer <token>"
+
+# 3. Enable TOTP with code from authenticator app
+curl -X POST http://localhost:8080/api/secure-portal/enable-totp \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"totp_code":"123456"}'
+
+# 4. Login to secure portal with 2FA
+curl -X POST http://localhost:8080/api/secure-portal/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123","totp_code":"123456"}'
+```
+
+### Programmatic TOTP Generation
+
+```python
+import pyotp
+import requests
+
+# After setup, use the secret to generate codes
+totp = pyotp.TOTP("YOUR_TOTP_SECRET")
+code = totp.now()  # Valid for 30 seconds
+
+# Login with generated code
+requests.post("http://localhost:8080/api/secure-portal/login", json={
+    "username": "admin",
+    "password": "admin123",
+    "totp_code": code
+})
+```
+
+### 2FA Vulnerabilities
+
+| ID | Vulnerability | Description |
+|----|---------------|-------------|
+| V-030 | TOTP Brute Force | No rate limiting on `/api/secure-portal/login` |
+| V-031 | Secret Disclosure | `totp_secret` exposed in login response |
+
+**The Vulns (32 total):**
 
 | Tier | Difficulty | Points | Examples |
 |------|-----------|--------|----------|
@@ -77,6 +138,29 @@ The full list with PoCs is at `/api/debug/vulns` (Level 0 only) or on the Scoreb
 | Staff | carlos | staff2024 |
 | User | john_doe | password123 |
 | User | jane_mantis | ilovemantis |
+
+### 2FA Pre-configured User
+
+For testing the Secure Portal without manual setup:
+
+| Field | Value |
+|-------|-------|
+| Username | `admin2fa` |
+| Password | `admin2fa123` |
+| TOTP Secret | `JBSWY3DPEHPK3PXP` |
+
+Generate TOTP code:
+```bash
+python3 -c "import pyotp; print(pyotp.TOTP('JBSWY3DPEHPK3PXP').now())"
+```
+
+Quick login test:
+```bash
+CODE=$(python3 -c "import pyotp; print(pyotp.TOTP('JBSWY3DPEHPK3PXP').now())")
+curl -X POST http://localhost:8080/api/secure-portal/login \
+  -H "Content-Type: application/json" \
+  -d "{\"username\":\"admin2fa\",\"password\":\"admin2fa123\",\"totp_code\":\"$CODE\"}"
+```
 
 ## Configuration
 

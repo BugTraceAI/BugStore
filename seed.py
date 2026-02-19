@@ -17,13 +17,25 @@ def get_md5_hash(password: str):
 print("Creating Users...")
 users = [
     User(
-        username="admin", 
-        email="admin@bugstore.com", 
-        password_hash=get_md5_hash("admin123"), 
-        role="admin", 
+        username="admin",
+        email="admin@bugstore.com",
+        password_hash=get_md5_hash("admin123"),
+        role="admin",
         name="Queen Bee",
         bio="Ruler of the hive. Approach with detailed reports.",
         avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=admin"
+    ),
+    # Admin with TOTP pre-configured for secure-portal testing
+    User(
+        username="admin2fa",
+        email="admin2fa@bugstore.com",
+        password_hash=get_md5_hash("admin2fa123"),
+        role="admin",
+        name="Secure Queen",
+        bio="2FA-protected administrator for testing.",
+        avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=admin2fa",
+        totp_secret="JBSWY3DPEHPK3PXP",  # Known test secret
+        totp_enabled=True
     ),
     User(
         username="staff", 
