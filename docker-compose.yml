@@ -25,10 +25,10 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: "mysql+pymysql://bugstore:bugstore@db:3306/bugstore"
-      BUGSTORE_WAF_ENABLED: "true"
+      BUGSTORE_WAF_ENABLED: "false"
       BUGSTORE_SCORING_ENABLED: "true"
       BUGSTORE_AUTO_SEED: "true"
-      BUGSTORE_WORKERS: "4"
+      BUGSTORE_WORKERS: "2"
       BUGSTORE_TIMEOUT: "30"
       BUGSTORE_REQUEST_TIMEOUT: "10"
     ports:

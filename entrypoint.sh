@@ -44,10 +44,13 @@ WORKERS=${BUGSTORE_WORKERS:-4}
 TIMEOUT=${BUGSTORE_TIMEOUT:-30}
 
 if [ "${BUGSTORE_WAF_ENABLED:-false}" = "true" ]; then
-    echo "🛡️ WAF enabled — starting Caddy + FastAPI (${WORKERS} workers, ${TIMEOUT}s timeout)..."
-    caddy start --config /app/Caddyfile --adapter caddyfile
-    cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers "$WORKERS" --timeout-keep-alive "$TIMEOUT"
+    echo "🛡️ WAF + Rate Limit enabled — starting Caddy with Coraza WAF..."
+    CADDY_CONFIG="/app/Caddyfile.waf"
 else
-    echo "🚀 Starting FastAPI server (${WORKERS} workers, ${TIMEOUT}s timeout)..."
-    cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8080 --workers "$WORKERS" --timeout-keep-alive "$TIMEOUT"
+    echo "🔓 WAF disabled — starting Caddy as HTTPS reverse proxy only..."
+    CADDY_CONFIG="/app/Caddyfile"
 fi
+
+echo "🌐 Caddy config: $CADDY_CONFIG (${WORKERS} workers, ${TIMEOUT}s timeout)"
+caddy start --config "$CADDY_CONFIG" --adapter caddyfile
+cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers "$WORKERS" --timeout-keep-alive "$TIMEOUT"

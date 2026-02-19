@@ -54,18 +54,18 @@ COPY --from=frontend-builder /app/frontend/dist ./static
 # Copy product images (after frontend build to avoid overwrite)
 COPY static/images ./static/images
 
-# Copy Caddyfile and other config
-COPY Caddyfile .
+# Copy Caddyfile configs (base + WAF variant)
+COPY Caddyfile Caddyfile.waf ./
 
 # Create volume directory for persistence
 RUN mkdir -p /data
 
-# Expose ports (80/443 for Caddy with TLS, 8080 for non-WAF mode)
-EXPOSE 80 443 8080
+# Expose ports (80/443 for Caddy with TLS)
+EXPOSE 80 443
 
-# Health Check (always checks FastAPI directly: 8000 when WAF, 8080 when no WAF)
+# Health Check (FastAPI behind Caddy on port 8000)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD curl -f http://localhost:8000/api/health || curl -f http://localhost:8080/api/health || exit 1
+  CMD curl -f http://localhost:8000/api/health || exit 1
 
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh

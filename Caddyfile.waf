@@ -1,0 +1,38 @@
+{
+	order coraza_waf first
+	order rate_limit before coraza_waf
+}
+
+bugstore.bugtraceai.com {
+	log {
+		output stdout
+		format json
+	}
+
+	rate_limit {
+		zone dynamic_zone {
+			key {remote_host}
+			events 100
+			window 10s
+		}
+	}
+
+	coraza_waf {
+		load_owasp_crs
+		directives `
+			SecRuleEngine On
+			SecRequestBodyAccess On
+			SecRequestBodyLimit 1048576
+			SecRequestBodyNoFilesLimit 131072
+			SecRequestBodyInMemoryLimit 131072
+			SecResponseBodyAccess Off
+		`
+	}
+
+	reverse_proxy localhost:8000 {
+		transport http {
+			response_header_timeout 30s
+			dial_timeout 5s
+		}
+	}
+}
