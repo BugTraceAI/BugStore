@@ -15,11 +15,14 @@ if [ ! -f /data/bugstore.db ]; then
     fi
 fi
 
+WORKERS=${BUGSTORE_WORKERS:-4}
+TIMEOUT=${BUGSTORE_TIMEOUT:-30}
+
 if [ "${BUGSTORE_WAF_ENABLED:-false}" = "true" ]; then
-    echo "🛡️ WAF enabled — starting Caddy + FastAPI..."
+    echo "🛡️ WAF enabled — starting Caddy + FastAPI (${WORKERS} workers, ${TIMEOUT}s timeout)..."
     caddy start --config /app/Caddyfile --adapter caddyfile
-    cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8000
+    cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers "$WORKERS" --timeout-keep-alive "$TIMEOUT"
 else
-    echo "🚀 Starting FastAPI server..."
-    cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8080
+    echo "🚀 Starting FastAPI server (${WORKERS} workers, ${TIMEOUT}s timeout)..."
+    cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8080 --workers "$WORKERS" --timeout-keep-alive "$TIMEOUT"
 fi

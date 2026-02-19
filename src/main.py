@@ -1,16 +1,41 @@
 from fastapi import FastAPI, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from src.routes import catalog, cart, checkout, orders, auth, user, blog, review, forum, admin, health, redirect, debug
 import os
+import asyncio
 
 from src.middleware.difficulty import DifficultyMiddleware
+
+
+class TimeoutMiddleware:
+    """Kill requests that exceed a time limit to prevent resource exhaustion."""
+
+    def __init__(self, app, timeout: float = 10.0):
+        self.app = app
+        self.timeout = timeout
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        try:
+            await asyncio.wait_for(
+                self.app(scope, receive, send), timeout=self.timeout
+            )
+        except asyncio.TimeoutError:
+            response = PlainTextResponse("Request timeout", status_code=504)
+            await response(scope, receive, send)
 
 app = FastAPI(
     title="BugStore API",
     description="A deliberately vulnerable e-commerce API — Part of the BugTraceAI ecosystem (https://bugtraceai.com)",
 )
+
+# Request timeout — kill anything over 10s to prevent resource exhaustion
+REQUEST_TIMEOUT = float(os.getenv("BUGSTORE_REQUEST_TIMEOUT", "10"))
+app.add_middleware(TimeoutMiddleware, timeout=REQUEST_TIMEOUT)
 
 # Difficulty Middleware (V-022)
 app.add_middleware(DifficultyMiddleware)

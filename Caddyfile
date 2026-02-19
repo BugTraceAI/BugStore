@@ -1,11 +1,20 @@
 {
 	order coraza_waf first
+	order rate_limit before coraza_waf
 }
 
 bugstore.bugtraceai.com {
 	log {
 		output stdout
 		format json
+	}
+
+	rate_limit {
+		zone dynamic_zone {
+			key {remote_host}
+			events 30
+			window 10s
+		}
 	}
 
 	coraza_waf {
@@ -20,5 +29,10 @@ bugstore.bugtraceai.com {
 		`
 	}
 
-	reverse_proxy localhost:8000
+	reverse_proxy localhost:8000 {
+		transport http {
+			response_header_timeout 30s
+			dial_timeout 5s
+		}
+	}
 }

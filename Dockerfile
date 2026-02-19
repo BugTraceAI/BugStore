@@ -16,7 +16,8 @@ RUN npm run build
 # Stage 2: Build Caddy with Coraza WAF module
 FROM caddy:builder AS caddy-builder
 RUN xcaddy build \
-  --with github.com/corazawaf/coraza-caddy/v2
+  --with github.com/corazawaf/coraza-caddy/v2 \
+  --with github.com/mholt/caddy-ratelimit
 
 
 # Stage 3: Final Image
