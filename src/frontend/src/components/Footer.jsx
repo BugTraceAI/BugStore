@@ -34,8 +34,9 @@ const Footer = () => {
                         <h4 className="font-bold mb-4 text-hive-text">Security</h4>
                         <ul className="space-y-2 text-sm">
                             <li><a href="https://bugtraceai.com" target="_blank" rel="noopener noreferrer" className="text-coral hover:text-coral-hover transition-colors font-bold">BugTraceAI</a></li>
+                            <li><Link to="/secure-portal/login" className="hover:text-coral transition-colors">Secure Portal (2FA)</Link></li>
                             <li><a href="https://github.com/BugTraceAI/BugTraceAI/wiki" target="_blank" rel="noopener noreferrer" className="hover:text-coral transition-colors">Documentation</a></li>
-                            <li><a href="https://github.com/BugTraceAI/BugStore" target="_blank" rel="noopener noreferrer" className="hover:text-coral transition-colors">Source Code</a></li>
+                            <li><a href="https://github.com/BugTraceAI/BugStore" target="_blank" rel="noopener noreferrer" className="hover:text-coral transition-colors">GitHub</a></li>
                             <li><div className="text-xs text-red-400 mt-4">DO NOT USE REAL CREDIT CARDS</div></li>
                         </ul>
                     </div>

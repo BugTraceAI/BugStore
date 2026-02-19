@@ -22,6 +22,7 @@ These accounts are created when the database is seeded:
 | staff | staff123 | staff | staff@bugstore.com |
 | user | user123 | user | user@bugstore.com |
 | hacker_pro | 123456 | user | hacker@darkweb.com |
+| admin2fa | admin2fa123 | admin | admin2fa@bugstore.com |
 
 ### Scoring
 
@@ -31,13 +32,13 @@ These accounts are created when the database is seeded:
 | 2 | Medium | 2 pts |
 | 3 | Hard | 3 pts |
 
-**Maximum score: 40 points** (11 + 20 + 9)
+**Maximum score: 44 points** (11 + 24 + 9)
 
 ### How to Use This Guide
 
 Each vulnerability has **3 progressive hints** hidden behind collapsible sections. Try to find the vulnerability on your own first. If you get stuck, open Hint 1. Still stuck? Open Hint 2. Hint 3 gets you very close but never gives you the answer.
 
-> **Note:** 3 vulnerabilities from the original design (V-015: SSRF, V-016: XXE, V-017: Unrestricted File Upload) are not yet implemented. This guide covers the **24 active vulnerabilities**.
+> **Note:** 3 vulnerabilities from the original design (V-015: SSRF, V-016: XXE, V-017: Unrestricted File Upload) are not yet implemented. This guide covers the **26 active vulnerabilities**.
 
 ---
 
@@ -66,6 +67,8 @@ Each vulnerability has **3 progressive hints** hidden behind collapsible section
 | V-020 | GraphQL Info Disclosure | 2 | A01:2021 - Broken Access Control | `/api/graphql` |
 | V-023 | Price Manipulation | 2 | A04:2021 - Insecure Design | `/api/checkout` |
 | V-028 | Broken Access Control (Admin) | 2 | A01:2021 - Broken Access Control | `/api/admin` |
+| V-031 | TOTP Brute Force (No Rate Limit) | 2 | A07:2021 - Identification Failures | `/api/secure-portal/login` |
+| V-032 | TOTP Secret Disclosure | 2 | A07:2021 - Identification Failures | `/api/secure-portal/login` |
 | V-021 | RCE via Health Check | 3 | A03:2021 - Injection | `/api/health` |
 | V-026 | Insecure Deserialization | 3 | A08:2021 - Software Integrity Failures | `/api/user/preferences` |
 | V-027 | Server-Side Template Injection | 3 | A03:2021 - Injection | `/api/admin/email-preview` |
@@ -833,6 +836,78 @@ Try accessing `/api/admin/vulnerable-debug-stats` without any authentication tok
 </details>
 
 **What did you learn?** Access control must be consistent across ALL endpoints. Debug and diagnostic endpoints are frequently forgotten during security reviews. In production, they should either be removed entirely or protected with the same authentication as other admin endpoints.
+
+---
+
+### V-031: TOTP Brute Force (No Rate Limiting)
+
+| | |
+|---|---|
+| **OWASP** | A07:2021 - Identification and Authentication Failures |
+| **Tier** | Medium (2 pts) |
+| **Target** | `/api/secure-portal/login` |
+| **Tools** | curl, Python, Burp Suite Intruder |
+
+The Secure Portal requires two-factor authentication. But how robust is the verification mechanism?
+
+<details>
+<summary>Hint 1</summary>
+
+The Secure Portal login at `/secure-portal/login` requires a username, password, AND a 6-digit TOTP code. Try submitting invalid codes. Does anything stop you from trying again immediately?
+
+</details>
+
+<details>
+<summary>Hint 2</summary>
+
+There is no rate limiting, no account lockout, and no delay between attempts on the TOTP verification. A 6-digit code has only 1,000,000 possible values (000000-999999). TOTP codes are valid for 30 seconds.
+
+</details>
+
+<details>
+<summary>Hint 3</summary>
+
+With no rate limiting, an attacker who knows the username and password can brute-force all possible TOTP codes within the 30-second validity window. The endpoint responds instantly to each attempt, making this feasible even with simple scripting tools. Compare this with V-025 (no rate limiting on regular login).
+
+</details>
+
+**What did you learn?** Two-factor authentication is only as strong as its weakest link. Without rate limiting, a 6-digit TOTP code can be brute-forced trivially. Always implement rate limiting and account lockout on 2FA verification endpoints.
+
+---
+
+### V-032: TOTP Secret Disclosure in Login Response
+
+| | |
+|---|---|
+| **OWASP** | A07:2021 - Identification and Authentication Failures |
+| **Tier** | Medium (2 pts) |
+| **Target** | `/api/secure-portal/login` |
+| **Tools** | Browser DevTools (Network tab), curl |
+
+When you successfully log in to the Secure Portal, examine the response carefully. Is there information that shouldn't be there?
+
+<details>
+<summary>Hint 1</summary>
+
+After a successful login to the Secure Portal, open the Network tab in DevTools and inspect the JSON response body. Look at all the fields returned, especially in the `user` object.
+
+</details>
+
+<details>
+<summary>Hint 2</summary>
+
+The login response includes a field that contains cryptographic material used to generate TOTP codes. This secret should never leave the server after the initial setup process. If an attacker captures this value, they can generate valid TOTP codes forever.
+
+</details>
+
+<details>
+<summary>Hint 3</summary>
+
+The `totp_secret` field is included in the login response's `user` object. With this Base32-encoded secret, anyone can use a TOTP library (like `pyotp` in Python) to generate valid 6-digit codes at any time, completely bypassing 2FA even after the user changes their password.
+
+</details>
+
+**What did you learn?** API responses should never include sensitive cryptographic secrets. The TOTP secret should only be displayed once during the initial 2FA setup. Leaking it in subsequent responses creates a permanent bypass for the second authentication factor.
 
 ---
 

@@ -22,6 +22,7 @@ Estas cuentas se crean cuando se inicializa la base de datos:
 | staff | staff123 | staff | staff@bugstore.com |
 | user | user123 | user | user@bugstore.com |
 | hacker_pro | 123456 | user | hacker@darkweb.com |
+| admin2fa | admin2fa123 | admin | admin2fa@bugstore.com |
 
 ### Puntuacion
 
@@ -31,13 +32,13 @@ Estas cuentas se crean cuando se inicializa la base de datos:
 | 2 | Medio | 2 pts |
 | 3 | Dificil | 3 pts |
 
-**Puntuacion maxima: 40 puntos** (11 + 20 + 9)
+**Puntuacion maxima: 44 puntos** (11 + 24 + 9)
 
 ### Como Usar Esta Guia
 
 Cada vulnerabilidad tiene **3 pistas progresivas** escondidas detras de secciones colapsables. Intenta encontrar la vulnerabilidad por tu cuenta primero. Si te atascas, abre la Pista 1. Aun atascado? Abre la Pista 2. La Pista 3 te acerca mucho pero nunca te da la respuesta.
 
-> **Nota:** 3 vulnerabilidades del diseno original (V-015: SSRF, V-016: XXE, V-017: Carga de archivos sin restricciones) aun no estan implementadas. Esta guia cubre las **24 vulnerabilidades activas**.
+> **Nota:** 3 vulnerabilidades del diseno original (V-015: SSRF, V-016: XXE, V-017: Carga de archivos sin restricciones) aun no estan implementadas. Esta guia cubre las **26 vulnerabilidades activas**.
 
 ---
 
@@ -66,6 +67,8 @@ Cada vulnerabilidad tiene **3 pistas progresivas** escondidas detras de seccione
 | V-020 | Divulgacion de Info via GraphQL | 2 | A01:2021 - Control de Acceso Roto | `/api/graphql` |
 | V-023 | Manipulacion de Precios | 2 | A04:2021 - Diseno Inseguro | `/api/checkout` |
 | V-028 | Control de Acceso Roto (Admin) | 2 | A01:2021 - Control de Acceso Roto | `/api/admin` |
+| V-031 | Fuerza Bruta TOTP (Sin Rate Limit) | 2 | A07:2021 - Fallos de Identificacion | `/api/secure-portal/login` |
+| V-032 | Divulgacion de Secreto TOTP | 2 | A07:2021 - Fallos de Identificacion | `/api/secure-portal/login` |
 | V-021 | RCE via Health Check | 3 | A03:2021 - Inyeccion | `/api/health` |
 | V-026 | Deserializacion Insegura | 3 | A08:2021 - Fallos de Integridad | `/api/user/preferences` |
 | V-027 | Inyeccion de Plantilla del Servidor (SSTI) | 3 | A03:2021 - Inyeccion | `/api/admin/email-preview` |
@@ -833,6 +836,78 @@ Intenta acceder a `/api/admin/vulnerable-debug-stats` sin ningun token de autent
 </details>
 
 **Que aprendiste?** El control de acceso debe ser consistente en TODOS los endpoints. Los endpoints de debug y diagnostico frecuentemente se olvidan durante las revisiones de seguridad. En produccion, deben eliminarse por completo o protegerse con la misma autenticacion que otros endpoints de admin.
+
+---
+
+### V-031: Fuerza Bruta TOTP (Sin Limite de Peticiones)
+
+| | |
+|---|---|
+| **OWASP** | A07:2021 - Fallos de Identificacion y Autenticacion |
+| **Tier** | Medio (2 pts) |
+| **Objetivo** | `/api/secure-portal/login` |
+| **Herramientas** | curl, Python, Burp Suite Intruder |
+
+El Portal Seguro requiere autenticacion de dos factores. Pero que tan robusto es el mecanismo de verificacion?
+
+<details>
+<summary>Pista 1</summary>
+
+El login del Portal Seguro en `/secure-portal/login` requiere usuario, contrasena Y un codigo TOTP de 6 digitos. Intenta enviar codigos invalidos. Algo te impide intentar de nuevo inmediatamente?
+
+</details>
+
+<details>
+<summary>Pista 2</summary>
+
+No hay rate limiting, ni bloqueo de cuenta, ni delay entre intentos en la verificacion TOTP. Un codigo de 6 digitos solo tiene 1,000,000 valores posibles (000000-999999). Los codigos TOTP son validos durante 30 segundos.
+
+</details>
+
+<details>
+<summary>Pista 3</summary>
+
+Sin rate limiting, un atacante que conozca el usuario y contrasena puede hacer fuerza bruta a todos los codigos TOTP posibles dentro de la ventana de validez de 30 segundos. El endpoint responde instantaneamente a cada intento, haciendo esto factible incluso con herramientas de scripting simples. Compara esto con V-025 (sin rate limiting en el login regular).
+
+</details>
+
+**Que aprendiste?** La autenticacion de dos factores es tan fuerte como su eslabon mas debil. Sin rate limiting, un codigo TOTP de 6 digitos puede ser atacado por fuerza bruta trivialmente. Siempre implementa rate limiting y bloqueo de cuenta en endpoints de verificacion 2FA.
+
+---
+
+### V-032: Divulgacion de Secreto TOTP en Respuesta de Login
+
+| | |
+|---|---|
+| **OWASP** | A07:2021 - Fallos de Identificacion y Autenticacion |
+| **Tier** | Medio (2 pts) |
+| **Objetivo** | `/api/secure-portal/login` |
+| **Herramientas** | DevTools del navegador (pestana Network), curl |
+
+Cuando inicias sesion exitosamente en el Portal Seguro, examina la respuesta cuidadosamente. Hay informacion que no deberia estar ahi?
+
+<details>
+<summary>Pista 1</summary>
+
+Despues de un login exitoso en el Portal Seguro, abre la pestana Network en DevTools e inspecciona el cuerpo de la respuesta JSON. Mira todos los campos devueltos, especialmente en el objeto `user`.
+
+</details>
+
+<details>
+<summary>Pista 2</summary>
+
+La respuesta del login incluye un campo que contiene material criptografico usado para generar codigos TOTP. Este secreto nunca deberia salir del servidor despues del proceso de configuracion inicial. Si un atacante captura este valor, puede generar codigos TOTP validos para siempre.
+
+</details>
+
+<details>
+<summary>Pista 3</summary>
+
+El campo `totp_secret` esta incluido en el objeto `user` de la respuesta de login. Con este secreto codificado en Base32, cualquiera puede usar una libreria TOTP (como `pyotp` en Python) para generar codigos validos de 6 digitos en cualquier momento, eludiendo completamente el 2FA incluso despues de que el usuario cambie su contrasena.
+
+</details>
+
+**Que aprendiste?** Las respuestas de la API nunca deben incluir secretos criptograficos sensibles. El secreto TOTP solo deberia mostrarse una vez durante la configuracion inicial del 2FA. Filtrarlo en respuestas posteriores crea un bypass permanente para el segundo factor de autenticacion.
 
 ---
 
