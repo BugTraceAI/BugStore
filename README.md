@@ -71,12 +71,12 @@ The full list with PoCs is at `/api/debug/vulns` (Level 0 only) or on the Scoreb
 
 ## Default Credentials
 
-| Role | Username | Password |
-|------|----------|----------|
-| Admin | admin | admin123 |
-| Staff | carlos | staff2024 |
-| User | john_doe | password123 |
-| User | jane_mantis | ilovemantis |
+| Role | Username | Email | Password |
+|------|----------|-------|----------|
+| Admin | admin | admin@bugstore.com | admin123 |
+| Staff | staff | staff@bugstore.com | staff123 |
+| User | user | user@bugstore.com | user123 |
+| User | hacker_pro | hacker@darkweb.com | 123456 |
 
 ## Configuration
 

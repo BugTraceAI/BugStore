@@ -6,9 +6,11 @@ primary_region = "ams"
 
 [env]
   PORT = "8080"
+  # Fly.io single-container: use SQLite (no MariaDB sidecar available)
+  # For docker-compose deployments, MariaDB is used instead
   DATABASE_URL = "sqlite:////data/bugstore.db"
   BUGSTORE_WAF_ENABLED = "false"
-  BUGSTORE_SCORING_ENABLED = "false"
+  BUGSTORE_SCORING_ENABLED = "true"
   BUGSTORE_DIFFICULTY = "0"
   BUGSTORE_AUTO_SEED = "true"
 
