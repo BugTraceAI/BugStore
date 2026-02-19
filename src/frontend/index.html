@@ -11,5 +11,10 @@
   <body class="bg-[#0D0A1A]">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <!-- V-004: Legacy AngularJS 1.7.7 (deliberately vulnerable) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.7/angular.min.js"></script>
+    <script src="/legacy/angular_widget.js"></script>
+    <!-- V-007: Prototype Pollution via deepMerge + V-003: DOM XSS via hash fragment -->
+    <script src="/legacy/custom.js"></script>
   </body>
 </html>

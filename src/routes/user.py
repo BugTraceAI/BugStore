@@ -12,6 +12,7 @@ class ProfileUpdate(BaseModel):
     name: Optional[str] = None
     bio: Optional[str] = None
     avatar_url: Optional[str] = None
+    role: Optional[str] = None  # V-018: Mass Assignment — allows role escalation
 
 @router.get("/profile")
 def get_profile(current_user: User = Depends(get_current_user)):
@@ -47,7 +48,9 @@ def update_profile(
         current_user.bio = data.bio
     if data.avatar_url is not None:
         current_user.avatar_url = data.avatar_url
-    
+    if data.role is not None:
+        current_user.role = data.role  # V-018: Mass Assignment — no authorization check
+
     db.commit()
     db.refresh(current_user)
     return {"message": "Profile updated in the swarm database.", "user": current_user}
