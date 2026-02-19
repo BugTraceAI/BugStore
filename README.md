@@ -178,6 +178,29 @@ This app is **intentionally vulnerable**. It contains:
 
 **Never** run this on a machine with sensitive data. Use a VM or container. You've been warned.
 
+## Contributors
+
+Thanks to these people for making BugStore better:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Acorzo1983">
+        <img src="https://avatars.githubusercontent.com/u/92622147?v=4" width="80" style="border-radius:50%" alt="Albert"/><br/>
+        <sub><b>Albert</b></sub>
+      </a><br/>
+      <sub>Creator & Maintainer</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Neorichi">
+        <img src="https://avatars.githubusercontent.com/u/3147619?v=4" width="80" style="border-radius:50%" alt="RSanchez"/><br/>
+        <sub><b>RSanchez</b></sub>
+      </a><br/>
+      <sub>Security (V-031, V-032)</sub>
+    </td>
+  </tr>
+</table>
+
 ## Contributing
 
 Found a bug in the bugs? PRs welcome. If you want to add a new vulnerability, open an issue first describing the attack vector and difficulty tier.
