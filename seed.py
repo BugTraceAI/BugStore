@@ -25,8 +25,19 @@ users = [
         avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=admin"
     ),
     User(
-        username="staff", 
-        email="staff@bugstore.com", 
+        username="admin2fa",
+        email="admin2fa@bugstore.com",
+        password_hash=get_md5_hash("admin2fa123"),
+        role="admin",
+        name="Secure Queen",
+        bio="2FA-protected administrator for secure portal testing.",
+        avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=admin2fa",
+        totp_secret="JBSWY3DPEHPK3PXP",
+        totp_enabled=True
+    ),
+    User(
+        username="staff",
+        email="staff@bugstore.com",
         password_hash=get_md5_hash("staff123"), 
         role="staff", 
         name="Worker Ant",

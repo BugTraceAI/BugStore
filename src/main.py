@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, PlainTextResponse
-from src.routes import catalog, cart, checkout, orders, auth, user, blog, review, forum, admin, health, redirect, debug
+from src.routes import catalog, cart, checkout, orders, auth, user, blog, review, forum, admin, health, redirect, debug, secure_portal
 import os
 import asyncio
 
@@ -63,6 +63,7 @@ app.include_router(admin.router, prefix="/api")
 app.include_router(health.router, prefix="/api")
 app.include_router(redirect.router, prefix="/api")
 app.include_router(debug.router, prefix="/api")
+app.include_router(secure_portal.router, prefix="/api")
 
 # Public config endpoint (non-sensitive settings for frontend)
 @app.get("/api/config")

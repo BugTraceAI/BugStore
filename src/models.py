@@ -23,6 +23,10 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # TOTP/2FA fields for secure-portal
+    totp_secret = Column(String(100), nullable=True)
+    totp_enabled = Column(Boolean, default=False)
+
     orders = relationship("Order", back_populates="user")
 
 class Product(Base):

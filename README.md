@@ -7,13 +7,13 @@
 
 <p align="center">
   <a href="https://bugtraceai.com"><img src="https://img.shields.io/badge/by-BugTraceAI-FF6B47?style=for-the-badge" alt="BugTraceAI" /></a>
-  <img src="https://img.shields.io/badge/vulns-30-red?style=for-the-badge" alt="30 Vulnerabilities" />
+  <img src="https://img.shields.io/badge/vulns-32-red?style=for-the-badge" alt="32 Vulnerabilities" />
   <img src="https://img.shields.io/badge/docker-ready-blue?style=for-the-badge&logo=docker" alt="Docker Ready" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License" />
 </p>
 
 <p align="center">
-  <strong>An insect-themed e-commerce app with 30 security vulnerabilities hidden inside.</strong><br/>
+  <strong>An insect-themed e-commerce app with 32 security vulnerabilities hidden inside.</strong><br/>
   Break it. Scan it. Learn from it.
 </p>
 
@@ -21,7 +21,7 @@
 
 ## What is this?
 
-BugStore is a full-featured online shop where you can "adopt" exotic bugs — beetles, mantises, spiders, and ants. It looks real. It works like a real store. But under the hood, it's riddled with **30 deliberately planted security vulnerabilities** spanning the OWASP Top 10 and beyond.
+BugStore is a full-featured online shop where you can "adopt" exotic bugs — beetles, mantises, spiders, and ants. It looks real. It works like a real store. But under the hood, it's riddled with **32 deliberately planted security vulnerabilities** spanning the OWASP Top 10 and beyond.
 
 It's the official playground of [**BugTraceAI**](https://bugtraceai.com) — built so you can point your scanners, tools, or bare hands at a real-looking target and practice finding bugs in bugs.
 
@@ -57,14 +57,15 @@ Docker:    Multi-stage build + docker-compose
 - Blog ("Chronicles") and forum ("The Buzz")
 - Product reviews
 - Admin dashboard with user/product management
+- Secure Portal with TOTP/2FA authentication
 - Scoring dashboard to track your progress
 
-**The Vulns (30 total):**
+**The Vulns (32 total):**
 
 | Tier | Difficulty | Points | Examples |
 |------|-----------|--------|----------|
 | Tier 1 | Easy | 1 pt | SQL Injection, Reflected XSS, IDOR, Open Redirect, Path Traversal |
-| Tier 2 | Medium | 2 pts | Blind SQLi, Stored XSS, SSRF, JWT issues, GraphQL info disclosure |
+| Tier 2 | Medium | 2 pts | Blind SQLi, Stored XSS, SSRF, JWT issues, GraphQL info disclosure, TOTP brute force |
 | Tier 3 | Hard | 3 pts | Remote Code Execution, SSTI, Insecure Deserialization |
 
 The full list with PoCs is at `/api/debug/vulns` (Level 0 only) or on the Scoreboard page.
@@ -77,6 +78,7 @@ The full list with PoCs is at `/api/debug/vulns` (Level 0 only) or on the Scoreb
 | Staff | staff | staff@bugstore.com | staff123 |
 | User | user | user@bugstore.com | user123 |
 | User | hacker_pro | hacker@darkweb.com | 123456 |
+| Admin (2FA) | admin2fa | admin2fa@bugstore.com | admin2fa123 |
 
 ## Configuration
 
@@ -120,7 +122,7 @@ For local dev, SQLite still works. Production uses MariaDB via docker-compose.
 
 ## Use It With BugTraceAI
 
-BugStore was built as a target for [**BugTraceAI**](https://bugtraceai.com). Point it at your local instance and see how many of the 30 vulnerabilities it catches automatically:
+BugStore was built as a target for [**BugTraceAI**](https://bugtraceai.com). Point it at your local instance and see how many of the 32 vulnerabilities it catches automatically:
 
 ```bash
 # Start BugStore
@@ -145,6 +147,7 @@ BugStore/
       forum.py           # V-003, V-004
       admin.py           # V-005, V-006, V-007
       health.py          # V-021 (RCE!)
+      secure_portal.py   # V-031, V-032 (TOTP/2FA)
       ...
     frontend/
       src/pages/         # React pages
@@ -157,7 +160,7 @@ BugStore/
 
 ## Walkthrough Guide
 
-New to BugStore? Follow our hint-based walkthrough to find all 24 active vulnerabilities. No full solutions — just progressive hints to help you learn by doing.
+New to BugStore? Follow our hint-based walkthrough to find all 26 active vulnerabilities. No full solutions — just progressive hints to help you learn by doing.
 
 - **[English Walkthrough](WALKTHROUGH_EN.md)**
 - **[Guia en Espanol](WALKTHROUGH_ES.md)**
@@ -171,7 +174,7 @@ This app is **intentionally vulnerable**. It contains:
 - Cross-Site Scripting (reflected + stored)
 - Insecure Deserialization
 - Authentication bypass
-- And 25 more...
+- And 27 more...
 
 **Never** run this on a machine with sensitive data. Use a VM or container. You've been warned.
 

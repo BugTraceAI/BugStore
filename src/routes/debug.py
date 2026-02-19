@@ -266,6 +266,24 @@ async def list_vulnerabilities(user: User = Depends(get_current_user_optional)):
             "status": "planted",
             "poc": "Exploit known CVEs in dependencies",
             "impact": "Various (XSS, prototype pollution, etc.)"
+        },
+        {
+            "id": "V-031",
+            "name": "TOTP Brute Force (No Rate Limiting)",
+            "tier": 2,
+            "location": "/api/secure-portal/login",
+            "status": "planted",
+            "poc": "Brute force 6-digit TOTP codes (000000-999999) with no rate limit",
+            "impact": "2FA bypass via exhaustive code enumeration"
+        },
+        {
+            "id": "V-032",
+            "name": "TOTP Secret Disclosure in Login Response",
+            "tier": 2,
+            "location": "/api/secure-portal/login",
+            "status": "planted",
+            "poc": "Login response includes totp_secret field — attacker can generate future codes",
+            "impact": "Permanent 2FA bypass once secret is captured"
         }
     ]
     

@@ -16,6 +16,9 @@ import ThreadDetail from './pages/ThreadDetail';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminProducts from './pages/AdminProducts';
+import SecurePortalLogin from './pages/SecurePortalLogin';
+import SecurePortalSetup from './pages/SecurePortalSetup';
+import SecurePortalDashboard from './pages/SecurePortalDashboard';
 import ScoringDashboard from './pages/ScoringDashboard';
 import { useConfig } from './ConfigContext';
 
@@ -54,6 +57,9 @@ function App() {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/admin/users" element={<AdminUsers />} />
                     <Route path="/admin/products" element={<AdminProducts />} />
+                    <Route path="/secure-portal" element={<SecurePortalDashboard />} />
+                    <Route path="/secure-portal/login" element={<SecurePortalLogin />} />
+                    <Route path="/secure-portal/setup" element={<SecurePortalSetup />} />
                     {config.scoring_enabled && (
                         <Route path="/scoring" element={<ScoringDashboard />} />
                     )}
