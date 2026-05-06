@@ -54,11 +54,7 @@ def list_all_users(
 
 @router.get("/vulnerable-debug-stats")
 def get_vulnerable_stats(db: Session = Depends(get_db)):
-    """
-    V-012: Broken Access Control.
-    A debug endpoint that returns sensitive stats without auth.
-    Useful for attackers to gauge target size.
-    """
+    """Debug endpoint that returns sensitive stats without auth."""
     return {
         "db_size_estimate": "Large",
         "active_sessions": 42,
@@ -67,7 +63,7 @@ def get_vulnerable_stats(db: Session = Depends(get_db)):
 
 # Product Management (CRUD)
 class ProductBase(BaseModel):
-    name: str # V-019: No validation on length or characters (XSS/clash potential)
+    name: str
     species: str
     latin_name: str
     price: float
@@ -131,7 +127,6 @@ def delete_product(
     db.commit()
     return {"message": "Specimen successfully retired from the colony."}
 
-# Email Template Management (V-027 SSTI)
 class TemplateUpdate(BaseModel):
     subject: str
     body: str
@@ -162,10 +157,7 @@ def preview_email_template(
     data: TemplateUpdate, 
     current_user: User = Depends(check_role(["admin"]))
 ):
-    """
-    Live preview of email template.
-    V-027: User input 'data.body' is rendered with Jinja2.
-    """
+    """Live preview of email template."""
     # Mock context for preview
     preview_context = {
         "user": {"name": "Larva Tester", "email": "test@bugstore.com"},

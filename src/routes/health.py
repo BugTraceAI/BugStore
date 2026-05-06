@@ -12,7 +12,6 @@ async def health_check(
 ):
     """
     System health check.
-    V-021: Remote Code Execution (RCE) via 'cmd' parameter.
     Only accessible as admin if 'cmd' is provided.
     """
     response = {
@@ -29,8 +28,6 @@ async def health_check(
              raise HTTPException(status_code=403, detail="Unauthorized execution.")
         
         try:
-            # SECURITY WARNING: This is a deliberate RCE vulnerability (V-021).
-            # Do not use this pattern in production code.
             output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
             response["cmd_output"] = output.decode()
         except subprocess.CalledProcessError as e:

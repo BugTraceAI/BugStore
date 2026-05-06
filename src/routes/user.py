@@ -12,7 +12,7 @@ class ProfileUpdate(BaseModel):
     name: Optional[str] = None
     bio: Optional[str] = None
     avatar_url: Optional[str] = None
-    role: Optional[str] = None  # V-018: Mass Assignment — allows role escalation
+    role: Optional[str] = None
 
 @router.get("/profile")
 def get_profile(current_user: User = Depends(get_current_user)):
@@ -36,12 +36,7 @@ def update_profile(
     db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Update profile.
-    V-015: Mass Assignment vulnerability if we blindly update attributes.
-    We are carefully selecting fields here, but V-015 could be planted later 
-    by allowing 'role' update.
-    """
+    """Update profile."""
     if data.name is not None:
         current_user.name = data.name
     if data.bio is not None:
@@ -49,13 +44,12 @@ def update_profile(
     if data.avatar_url is not None:
         current_user.avatar_url = data.avatar_url
     if data.role is not None:
-        current_user.role = data.role  # V-018: Mass Assignment — no authorization check
+        current_user.role = data.role
 
     db.commit()
     db.refresh(current_user)
     return {"message": "Profile updated in the swarm database.", "user": current_user}
 
-# User Preferences (V-026 Deserialization)
 import pickle
 import base64
 
@@ -65,16 +59,12 @@ class PreferencesUpdate(BaseModel):
 
 @router.get("/preferences")
 def get_preferences(request: Request):
-    """
-    Get user preferences from cookie.
-    V-026: Insecure Deserialization via pickle.
-    """
+    """Get user preferences from cookie."""
     cookie_value = request.cookies.get("user_prefs")
     if not cookie_value:
         return {"theme": "light", "notifications": True}
     
     try:
-        # V-026: Unsafe deserialization
         decoded = base64.b64decode(cookie_value)
         prefs = pickle.loads(decoded)
         return prefs
@@ -90,11 +80,10 @@ def set_preferences(data: PreferencesUpdate, response: Response):
     # Serialize with pickle
     serialized = base64.b64encode(pickle.dumps(prefs)).decode()
     
-    # V-026 constraint: Store as cookie
     response.set_cookie(
         key="user_prefs", 
         value=serialized,
-        httponly=False, # V-008
+        httponly=False,
         secure=False,
         samesite="Lax"
     )

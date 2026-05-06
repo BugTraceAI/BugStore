@@ -18,12 +18,8 @@ class ReplyCreate(BaseModel):
 
 @router.get("/threads")
 def get_threads(q: Optional[str] = None, db: Session = Depends(get_db)):
-    """
-    List forum threads.
-    V-001: SQL Injection vulnerability in search query.
-    """
+    """List forum threads."""
     if q:
-        # V-001: RAW SQL with string formatting (DANGEROUS)
         query = f"SELECT * FROM threads WHERE title LIKE '%{q}%' OR content LIKE '%{q}%'"
         result = db.execute(sqlalchemy_text(query))
         return [dict(row._mapping) for row in result]
@@ -32,11 +28,7 @@ def get_threads(q: Optional[str] = None, db: Session = Depends(get_db)):
 
 @router.get("/threads/{thread_id}")
 def get_thread_detail(thread_id: str, db: Session = Depends(get_db)):
-    """
-    Get thread details and replies.
-    V-001: SQL Injection vulnerability in thread_id parameter.
-    """
-    # V-001: RAW SQL with string formatting (DANGEROUS)
+    """Get thread details and replies."""
     query = f"SELECT * FROM threads WHERE id = {thread_id}"
     try:
         thread_result = db.execute(sqlalchemy_text(query)).first()

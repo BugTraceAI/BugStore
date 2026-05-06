@@ -57,9 +57,6 @@ const AdminProducts = () => {
         const url = isNew ? '/api/admin/products' : `/api/admin/products/${editingProduct.id}`;
         const method = isNew ? 'POST' : 'PUT';
 
-        // V-019: No client-side validation on these fields either.
-        // An attacker (or malicious admin) can inject scripts into description/name.
-
         try {
             const res = await fetch(url, {
                 method: method,

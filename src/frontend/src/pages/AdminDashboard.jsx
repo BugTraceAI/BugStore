@@ -156,7 +156,7 @@ const AdminDashboard = () => {
                                 <span className="font-black uppercase tracking-widest text-xs">Security Advisory</span>
                             </div>
                             <p className="text-xs text-red-300 font-medium leading-relaxed opacity-70">
-                                Warning: Debug endpoints currently exposed in sector 7-A (V-012). Maintain low observability metrics during maintenance.
+                                Warning: Debug endpoints currently exposed in sector 7-A. Maintain low observability metrics during maintenance.
                             </p>
                             <a href="/api/admin/vulnerable-debug-stats" target="_blank" className="mt-6 inline-block text-[9px] font-black uppercase tracking-[0.2em] text-red-400 underline">
                                 Leak Investigation Access

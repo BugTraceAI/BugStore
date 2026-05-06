@@ -3,10 +3,6 @@ Secure Portal - Admin with mandatory TOTP/2FA authentication.
 
 Coexists with /admin (no 2FA) for testing both authentication flows.
 
-Vulnerabilities planted:
-- V-031: No rate-limit on TOTP verification (brute force possible)
-- V-032: TOTP secret exposed in login response (info disclosure)
-
 Original contribution by Neorichi (RSanchez), adapted for MariaDB codebase.
 """
 
@@ -62,10 +58,7 @@ def generate_totp_secret() -> str:
 
 
 def verify_totp(secret: str, code: str) -> bool:
-    """
-    Verify a TOTP code.
-    V-031: NO rate limiting - allows brute force of 6-digit codes.
-    """
+    """Verify a TOTP code."""
     totp = pyotp.TOTP(secret)
     return totp.verify(code)
 
@@ -124,12 +117,7 @@ def check_role_2fa(required_roles: list):
 
 @router.post("/login")
 def secure_login(data: SecureLoginRequest, db: Session = Depends(get_db)):
-    """
-    Login for secure-portal. Requires username, password AND TOTP code.
-
-    V-031: No rate-limit on TOTP verification (brute force possible).
-    V-032: TOTP secret exposed in response (info disclosure).
-    """
+    """Login for secure-portal. Requires username, password AND TOTP code."""
     user = db.query(User).filter(User.username == data.username).first()
 
     if not user or not verify_password(data.password, user.password_hash):
@@ -144,7 +132,6 @@ def secure_login(data: SecureLoginRequest, db: Session = Depends(get_db)):
             detail="2FA not configured. Please set up TOTP first at /secure-portal/setup"
         )
 
-    # V-031: NO rate limiting here - allows brute force of TOTP code
     if not verify_totp(user.totp_secret, data.totp_code):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -157,7 +144,6 @@ def secure_login(data: SecureLoginRequest, db: Session = Depends(get_db)):
         "role": user.role
     })
 
-    # V-032: Expose totp_secret in response (info disclosure)
     return {
         "access_token": token,
         "token_type": "bearer",
@@ -165,7 +151,7 @@ def secure_login(data: SecureLoginRequest, db: Session = Depends(get_db)):
             "id": user.id,
             "username": user.username,
             "role": user.role,
-            "totp_secret": user.totp_secret  # V-032: Should not be here
+            "totp_secret": user.totp_secret
         },
         "2fa_verified": True
     }

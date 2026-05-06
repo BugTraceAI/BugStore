@@ -44,8 +44,6 @@ const Reviews = ({ productId }) => {
                     product_id: parseInt(productId),
                     rating: rating,
                     comment: comment,
-                    // V-020: Planted vulnerability - we allow the client to set is_approved
-                    // An attacker can set this to true to bypass moderation.
                     is_approved: false
                 })
             });
@@ -166,7 +164,6 @@ const Reviews = ({ productId }) => {
 
                                 <div
                                     className="text-hive-muted font-medium leading-relaxed italic"
-                                    /* V-003: Submitting review comments that could contain XSS */
                                     dangerouslySetInnerHTML={{ __html: review.comment }}
                                 />
                             </div>

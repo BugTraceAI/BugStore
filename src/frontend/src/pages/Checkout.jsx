@@ -39,7 +39,6 @@ const Checkout = () => {
                 body: JSON.stringify({
                     shipping_address: address,
                     payment_simulated: payment,
-                    // V-023: Trusted Client Total - we send exactly what the frontend calculates
                     total: cart.totals.total
                 })
             });

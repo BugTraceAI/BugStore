@@ -12,8 +12,6 @@ class ReviewCreate(BaseModel):
     product_id: int
     rating: int
     comment: str
-    # V-020: Mass Assignment potential. If the user sends is_approved=True, 
-    # and the backend blindly spreads the dict, it bypasses moderation.
     is_approved: bool = False
 
 @router.get("/{product_id}")
@@ -32,17 +30,14 @@ def create_review(
     db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Submit a review.
-    V-020: Mass Assignment vulnerability.
-    """
+    """Submit a review."""
     # Blindly using data from client (simulating mass assignment)
     new_review = Review(
         product_id=data.product_id,
         user_id=current_user.id,
         rating=data.rating,
         comment=data.comment,
-        is_approved=data.is_approved # V-020: TRUSTING CLIENT on moderation flag
+        is_approved=data.is_approved
     )
     
     db.add(new_review)

@@ -20,10 +20,7 @@ class UserLogin(BaseModel):
 
 @router.post("/register")
 def register(data: UserRegister, db: Session = Depends(get_db)):
-    """
-    User registration.
-    V-019: No validation on username (special characters allowed).
-    """
+    """User registration."""
     # Check if user exists
     existing_user = db.query(User).filter(
         (User.username == data.username) | (User.email == data.email)
@@ -34,9 +31,9 @@ def register(data: UserRegister, db: Session = Depends(get_db)):
 
     # Create new user
     new_user = User(
-        username=data.username, # No validation (V-019)
+        username=data.username,
         email=data.email,
-        password_hash=get_password_hash(data.password), # MD5 (V-006)
+        password_hash=get_password_hash(data.password),
         name=data.name,
         role="user"
     )
@@ -61,10 +58,7 @@ def register(data: UserRegister, db: Session = Depends(get_db)):
 
 @router.post("/login")
 def login(data: UserLogin, db: Session = Depends(get_db)):
-    """
-    User login.
-    V-007: Plaintext response of JWT.
-    """
+    """User login."""
     user = db.query(User).filter(User.username == data.username).first()
     
     if not user or not verify_password(data.password, user.password_hash):

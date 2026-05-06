@@ -28,12 +28,10 @@ class Order:
     total: float
     tracking_number: Optional[str]
 
-# Queries (V-020: Information Disclosure)
 @strawberry.type
 class Query:
     @strawberry.field
     def users(self) -> List[User]:
-        # V-020: No pagination limits, no auth check. Enumeration of all users.
         db = SessionLocal()
         try:
             users = db.query(UserModel).all()
@@ -51,7 +49,6 @@ class Query:
 
     @strawberry.field
     def orders(self, user_id: Optional[int] = None) -> List[Order]:
-        # V-020: Access any user's orders if user_id is provided, or ALL orders if not.
         db = SessionLocal()
         try:
             if user_id:
@@ -81,12 +78,10 @@ class Query:
         finally:
             db.close()
 
-# Mutations (V-020: Broken Access Control)
 @strawberry.type
 class Mutation:
     @strawberry.mutation
     def update_bio(self, user_id: int, bio: str) -> str:
-        # V-020: IDOR. Can update any user's bio without auth check.
         db = SessionLocal()
         try:
             user = db.query(UserModel).filter(UserModel.id == user_id).first()
