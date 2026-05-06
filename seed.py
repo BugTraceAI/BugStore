@@ -289,7 +289,7 @@ p2 = db.query(Product).filter(Product.name == "Giant Stag Beetle").first()
 
 reviews = [
     Review(product_id=p1.id, user_id=user.id, rating=5, comment="These guys are hilarious! They really do play dead.", is_approved=True),
-    Review(product_id=p1.id, user_id=hacker.id, rating=1, comment="<script>alert('XSS')</script> Boring.", is_approved=True), # V-003 XSS payload
+    Review(product_id=p1.id, user_id=hacker.id, rating=1, comment="<script>alert('XSS')</script> Boring.", is_approved=True),
     Review(product_id=p2.id, user_id=user.id, rating=4, comment="Strong pincers! Watch your fingers.", is_approved=True)
 ]
 db.add_all(reviews)

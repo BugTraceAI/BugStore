@@ -97,7 +97,6 @@ const Catalog = () => {
                             dangerouslySetInnerHTML={{ __html: searchTerm }}
                         ></span>"
                     </h2>
-                    {/* V-002: Reflected XSS vulnerability planted here */}
                 </div>
             )}
 

@@ -19,7 +19,6 @@ class Address(BaseModel):
 class CheckoutRequest(BaseModel):
     shipping_address: Address
     payment_simulated: Optional[dict] = None
-    # V-023: Trusted Client Total (frontend sends total to backend)
     total: float 
 
 @router.post("/process")
@@ -28,19 +27,14 @@ def process_checkout(
     db: Session = Depends(get_db), 
     session_id: str = Depends(get_session_id)
 ):
-    """
-    Process checkout.
-    V-023: Vulnerability planted - we trust the total sent from the client.
-    """
+    """Process checkout."""
     cart_items = db.query(CartItem).filter(CartItem.session_id == session_id).all()
     
     if not cart_items:
         raise HTTPException(status_code=400, detail="Your colony is empty. Cannot checkout.")
 
-    # Create the order
-    # V-023: Use the total from the request instead of calculating it on backend
     new_order = Order(
-        total=data.total, # TRUSTING THE CLIENT (V-023)
+        total=data.total,
         shipping_address=json.dumps(data.shipping_address.model_dump()),
         status="Pending"
     )
@@ -57,9 +51,6 @@ def process_checkout(
         )
         db.add(order_item)
         
-        # V-025: No rate limiting or stock check?
-        # Simulating order confirmation
-    
     # Empty cart after checkout
     db.query(CartItem).filter(CartItem.session_id == session_id).delete()
     

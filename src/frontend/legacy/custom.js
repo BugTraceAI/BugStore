@@ -1,14 +1,11 @@
 /*
  * BugStore Custom Client-Side Scripts
- * Contains various vulnerabilities as per PRD F-031
  */
 
-// V-007: Prototype Pollution via deepMerge
 function deepMerge(target, source) {
     for (let key in source) {
         if (source[key] && typeof source[key] === 'object') {
             if (!target[key]) target[key] = {};
-            // V-007: No check for __proto__, constructor, prototype
             deepMerge(target[key], source[key]);
         } else {
             target[key] = source[key];
@@ -17,7 +14,6 @@ function deepMerge(target, source) {
     return target;
 }
 
-// Parse URL filters and merge into config (V-007 trigger)
 function applyURLFilters() {
     const urlParams = new URLSearchParams(window.location.search);
     const filterParam = urlParams.get('filter');
@@ -34,19 +30,16 @@ function applyURLFilters() {
     }
 }
 
-// V-003: DOM XSS via hash fragment
 function handleHashFragment() {
     const hash = window.location.hash.substring(1);
     if (hash) {
         const container = document.getElementById('hash-content');
         if (container) {
-            // V-003: Unsafe innerHTML assignment
             container.innerHTML = decodeURIComponent(hash);
         }
     }
 }
 
-// Newsletter subscription (CSRF vulnerable as per F-031)
 function subscribeNewsletter(email) {
     fetch('/api/newsletter/subscribe', {
         method: 'POST',
@@ -58,13 +51,11 @@ function subscribeNewsletter(email) {
         .catch(err => console.error('Subscription failed:', err));
 }
 
-// Initialize on page load
 if (typeof window !== 'undefined') {
     window.addEventListener('DOMContentLoaded', function () {
         applyURLFilters();
         handleHashFragment();
 
-        // Setup newsletter form if exists
         const newsletterForm = document.getElementById('newsletter-form');
         if (newsletterForm) {
             newsletterForm.addEventListener('submit', function (e) {
@@ -77,7 +68,6 @@ if (typeof window !== 'undefined') {
         }
     });
 
-    // Expose functions globally for testing
     window.BugStore = {
         deepMerge: deepMerge,
         subscribeNewsletter: subscribeNewsletter

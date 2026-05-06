@@ -80,7 +80,6 @@ const BlogDetail = () => {
 
                         <div
                             className="prose prose-lg max-w-none text-hive-muted font-medium leading-relaxed blog-content"
-                            /* V-016: Stored XSS - rendering raw content from DB */
                             dangerouslySetInnerHTML={{ __html: blog.content }}
                         />
                     </div>

@@ -19,7 +19,7 @@ from datetime import datetime
 class Finding:
     """Standardized vulnerability finding"""
     scanner: str
-    vuln_id: str = None  # Mapped to V-001, V-002, etc.
+    vuln_id: str = None
     name: str = ""
     severity: str = ""
     url: str = ""
@@ -152,7 +152,7 @@ class BugTraceAIImporter:
         for vuln in data.get('vulnerabilities', []):
             finding = Finding(
                 scanner='BugTraceAI',
-                vuln_id=vuln.get('id'),  # Already mapped to V-XXX
+                vuln_id=vuln.get('id'),
                 name=vuln.get('name', ''),
                 severity=vuln.get('severity', ''),
                 url=vuln.get('url', ''),
@@ -267,7 +267,7 @@ class ResultAggregator:
     
     def get_detection_rate(self) -> float:
         """Calculate detection rate (28 total vulnerabilities)"""
-        total_vulns = 28  # V-015 and V-016 not implemented
+        total_vulns = 28
         detected = len(self.mapped_vulns)
         return (detected / total_vulns) * 100
     

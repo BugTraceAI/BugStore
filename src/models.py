@@ -5,11 +5,7 @@ from datetime import datetime
 Base = declarative_base()
 
 class User(Base):
-    """
-    User model for the colony members.
-    V-006: Storing passwords using MD5 (insecure hashing).
-    V-019: No validation on username allows for special characters.
-    """
+    """User model for the colony members."""
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -96,11 +92,7 @@ class Coupon(Base):
     active = Column(Boolean, default=True)
 
 class Order(Base):
-    """
-    Customer orders.
-    V-009: Insecure direct object reference (IDOR) will be possible.
-    V-023: Trusting client totals.
-    """
+    """Customer orders."""
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -134,15 +126,12 @@ class OrderItem(Base):
     product = relationship("Product")
 
 class Blog(Base):
-    """
-    Blog posts for the community hub.
-    V-016: Stored XSS vulnerability will be planted in content.
-    """
+    """Blog posts for the community hub."""
     __tablename__ = "blogs"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
-    content = Column(Text, nullable=False) # Stored XSS (V-016)
+    content = Column(Text, nullable=False)
     author_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -150,11 +139,7 @@ class Blog(Base):
     author = relationship("User")
 
 class Review(Base):
-    """
-    Product reviews by colony members.
-    V-020: Review moderation bypass potential.
-    V-003: Potential XSS in comments.
-    """
+    """Product reviews by colony members."""
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -169,10 +154,7 @@ class Review(Base):
     user = relationship("User")
 
 class Thread(Base):
-    """
-    Forum threads for colony discussions.
-    V-001: SQL injection target (simulated in routes).
-    """
+    """Forum threads for colony discussions."""
     __tablename__ = "threads"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -200,14 +182,11 @@ class Reply(Base):
     author = relationship("User")
 
 class EmailTemplate(Base):
-    """
-    Email templates for notifications.
-    V-027: SSTI vulnerability in template rendering.
-    """
+    """Email templates for notifications."""
     __tablename__ = "email_templates"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), unique=True, index=True, nullable=False)
     subject = Column(String(255), nullable=False)
-    body = Column(Text, nullable=False) # SSTI payload here
+    body = Column(Text, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

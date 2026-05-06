@@ -19,20 +19,15 @@ def get_products(
     offset: int = 0,
     db: Session = Depends(get_db)
 ):
-    """
-    Get product list with vulnerable filtering (V-001, V-012).
-    """
+    """Get product list with filtering."""
     query_str = "SELECT * FROM products WHERE 1=1"
     
-    # V-001: SQL Injection via category (string concatenation)
     if category:
         query_str += f" AND category = '{category}'"
         
-    # V-001: SQL Injection via search (string concatenation)
     if search:
         query_str += f" AND name LIKE '%{search}%'"
         
-    # V-012: Blind SQL Injection via price filters (lack of type enforcement in query string)
     if min_price is not None:
         query_str += f" AND price >= {min_price}"
     if max_price is not None:
@@ -72,17 +67,13 @@ def get_product(id: int, db: Session = Depends(get_db)):
 
 @router.get("/{id}/image")
 def get_product_image(id: int, file: str = Query(...)):
-    """
-    Serve product image with Path Traversal vulnerability (V-014).
-    """
+    """Serve product image."""
     # Resolve static directory path relative to this file
     # src/routes/catalog.py -> src -> root
     current_dir = os.path.dirname(os.path.abspath(__file__))
     root_dir = os.path.dirname(os.path.dirname(current_dir))
     static_images_dir = os.path.join(root_dir, "static", "images")
     
-    # V-014: Path Traversal via string concatenation
-    # An attacker can use ?file=../../etc/passwd or similar
     image_path = os.path.join(static_images_dir, file)
     
     # In a real exploit, this would return any file the process can read.

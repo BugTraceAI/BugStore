@@ -131,7 +131,7 @@ const OrderHistory = () => {
                                                     to={`/orders/${order.id}`}
                                                     className="text-xs font-black text-hive-muted underline flex items-center gap-1 hover:text-coral transition-colors"
                                                 >
-                                                    Public Tracking Link (V-009) <ExternalLink className="w-3 h-3" />
+                                                    Public Tracking Link <ExternalLink className="w-3 h-3" />
                                                 </Link>
                                             </div>
                                         </div>

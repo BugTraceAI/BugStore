@@ -13,8 +13,6 @@ const ThreadDetail = () => {
 
     const fetchThread = async () => {
         try {
-            // V-001: The {id} here is passed directly to the backend RAW SQL query.
-            // An attacker can browse /forum/thread/1 OR 1-- etc.
             const res = await fetch(`/api/forum/threads/${id}`);
             const data = await res.json();
             if (res.ok) {

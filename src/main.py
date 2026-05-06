@@ -37,10 +37,8 @@ app = FastAPI(
 REQUEST_TIMEOUT = float(os.getenv("BUGSTORE_REQUEST_TIMEOUT", "10"))
 app.add_middleware(TimeoutMiddleware, timeout=REQUEST_TIMEOUT)
 
-# Difficulty Middleware (V-022)
 app.add_middleware(DifficultyMiddleware)
 
-# CORS setup (V-008: Overly permissive CORS)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -74,7 +72,6 @@ async def get_public_config():
         "difficulty_level": int(os.getenv("BUGSTORE_DIFFICULTY", "0")),
     }
 
-# GraphQL (V-020)
 from src.graphql_server import graphql_app
 app.include_router(graphql_app, prefix="/api/graphql")
 
@@ -90,17 +87,13 @@ import uuid
 
 @app.get("/")
 async def read_root(request: Request, response: Response, db: Session = Depends(get_db)):
-    """
-    Root endpoint - serves frontend HTML.
-    V-013: SQL Injection via TrackingId cookie.
-    """
+    """Root endpoint - serves frontend HTML."""
     tracking_id = request.cookies.get("TrackingId")
     if not tracking_id:
         raw_id = str(uuid.uuid4())
         tracking_id = base64.b64encode(raw_id.encode()).decode()
         response.set_cookie(key="TrackingId", value=tracking_id)
     
-    # V-013: Vulnerable SQL injection (blind — result not shown to user)
     try:
         decoded_id = base64.b64decode(tracking_id).decode()
         query = f"SELECT 1 FROM products WHERE description = '{decoded_id}' LIMIT 1"
