@@ -89,17 +89,18 @@ import base64
 import uuid
 
 @app.get("/")
-async def read_root(request: Request, response: Response, db: Session = Depends(get_db)):
+async def read_root(request: Request, db: Session = Depends(get_db)):
     """
     Root endpoint - serves frontend HTML.
     V-013: SQL Injection via TrackingId cookie.
     """
     tracking_id = request.cookies.get("TrackingId")
+    new_cookie = None
     if not tracking_id:
         raw_id = str(uuid.uuid4())
         tracking_id = base64.b64encode(raw_id.encode()).decode()
-        response.set_cookie(key="TrackingId", value=tracking_id)
-    
+        new_cookie = tracking_id
+
     # V-013: Vulnerable SQL injection (blind — result not shown to user)
     try:
         decoded_id = base64.b64decode(tracking_id).decode()
@@ -107,11 +108,17 @@ async def read_root(request: Request, response: Response, db: Session = Depends(
         db.execute(text(query)).close()
     except Exception:
         pass
-    
-    # Serve frontend HTML
+
+    # Serve frontend HTML — set cookie on the actual response object
     if os.path.exists("/app/static/index.html"):
-        return FileResponse("/app/static/index.html")
-    return {"message": "Welcome to BugStore API", "status": "running"}
+        resp = FileResponse("/app/static/index.html")
+    else:
+        from fastapi.responses import JSONResponse
+        resp = JSONResponse({"message": "Welcome to BugStore API", "status": "running"})
+
+    if new_cookie:
+        resp.set_cookie(key="TrackingId", value=new_cookie)
+    return resp
 
 # Catch-all route for SPA (must be last)
 @app.get("/{full_path:path}")

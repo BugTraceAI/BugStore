@@ -53,4 +53,4 @@ fi
 
 echo "🌐 Caddy config: $CADDY_CONFIG (${WORKERS} workers, ${TIMEOUT}s timeout)"
 caddy start --config "$CADDY_CONFIG" --adapter caddyfile
-cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers "$WORKERS" --timeout-keep-alive "$TIMEOUT"
+cd /app && python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --workers "$WORKERS" --timeout-keep-alive "$TIMEOUT" --limit-concurrency 200

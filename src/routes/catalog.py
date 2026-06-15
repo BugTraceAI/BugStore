@@ -13,8 +13,8 @@ router = APIRouter(prefix="/products", tags=["catalog"])
 def get_products(
     category: Optional[str] = None,
     search: Optional[str] = None,
-    min_price: Optional[float] = None,
-    max_price: Optional[float] = None,
+    min_price: Optional[str] = None,
+    max_price: Optional[str] = None,
     limit: int = 12,
     offset: int = 0,
     db: Session = Depends(get_db)
