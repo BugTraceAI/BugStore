@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://bugtraceai.com"><img src="https://img.shields.io/badge/by-BugTraceAI-FF6B47?style=for-the-badge" alt="BugTraceAI" /></a>
-  <a href="https://discord.gg/5HjujkScC"><img src="https://img.shields.io/discord/5HjujkScC?label=Discord&logo=discord&logoColor=white&color=5865F2&style=for-the-badge" alt="Discord" /></a>
+  <a href="https://discord.gg/5HjujkScC"><img src="https://img.shields.io/badge/Join_the_Community-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Join the Community on Discord" /></a>
   <img src="https://img.shields.io/badge/vulns-32-red?style=for-the-badge" alt="32 Vulnerabilities" />
   <img src="https://img.shields.io/badge/docker-ready-blue?style=for-the-badge&logo=docker" alt="Docker Ready" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License" />
