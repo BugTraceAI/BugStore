@@ -20,6 +20,8 @@
 
 ---
 
+[Run locally](#quick-start) · [Explore the challenges](#whats-inside) · [Explore the BugTraceAI suite](https://github.com/BugTraceAI/BugTraceAI) · [See a sample scan report](https://demo.bugtraceai.com/bugtraceai)
+
 ## What is this?
 
 BugStore is a full-featured online shop where you can "adopt" exotic bugs — beetles, mantises, spiders, and ants. It looks real. It works like a real store. But under the hood, it's riddled with **32 deliberately planted security vulnerabilities** spanning the OWASP Top 10 and beyond.
